@@ -1,0 +1,399 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ===========================================================================
+   SHADCN SEMANTIC TOKEN MAP (kept so all shadcn/ui components inherit the
+   brand palette). The raw values are set in :root below.
+   =========================================================================== */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-heading: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* ===========================================================================
+   BRAND DESIGN TOKENS  —  "Crisp Coastal Chrome"
+   =========================================================================== */
+@theme {
+  /* Surfaces */
+  --color-canvas: #f7fafc; /* Squeegee White — page bg (never pure #fff) */
+  --color-seaglass: #e6eef2; /* Sea Glass — section bands / frosted base */
+
+  /* Deep navy spine */
+  --color-navy-900: #0b2942;
+  --color-navy-800: #0f3354;
+  --color-navy-700: #16456c;
+  --color-navy-600: #1d5680;
+
+  /* Tide sky blues */
+  --color-tide-100: #dceef8;
+  --color-tide-300: #7fc1e6;
+  --color-tide-400: #3da5d9;
+  --color-tide-500: #2a8cc4;
+  --color-tide-600: #1b6fb3;
+
+  /* Rationed golden hour */
+  --color-gold-200: #fce2b0;
+  --color-gold-300: #f9d28a;
+  --color-gold-400: #f6c062;
+  --color-gold-500: #f2a93b;
+  --color-gold-600: #d98a1e;
+
+  /* Polished chrome */
+  --color-chrome-100: #eaeff3;
+  --color-chrome-300: #c2ccd4;
+  --color-chrome-500: #94a3b0;
+
+  /* Ink */
+  --color-ink: #2a3f52; /* body copy */
+  --color-ink-muted: #48637a; /* captions / helper */
+
+  /* Type */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+
+  /* Motion easing — "a glass door on a good hinge" */
+  --ease-glass: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Glass shadows */
+  --shadow-glass: 0 1px 0 0 rgb(255 255 255 / 0.7) inset,
+    0 18px 40px -24px rgb(11 41 66 / 0.45);
+  --shadow-glass-lg: 0 1px 0 0 rgb(255 255 255 / 0.8) inset,
+    0 40px 80px -36px rgb(11 41 66 / 0.5);
+  --shadow-cta: 0 10px 30px -8px rgb(242 169 59 / 0.55);
+
+  /* Animations */
+  --animate-accordion-down: accordion-down 0.28s var(--ease-glass);
+  --animate-accordion-up: accordion-up 0.28s var(--ease-glass);
+  --animate-shimmer: shimmer 6s linear infinite;
+  --animate-float-y: float-y 7s ease-in-out infinite;
+  --animate-cta-breathe: cta-breathe 3s ease-in-out infinite;
+}
+
+/* ===========================================================================
+   SHADCN SEMANTIC VALUES  (light theme only — the brand is bright; the navy
+   "night window" footer is handled with explicit utilities, not dark mode)
+   =========================================================================== */
+:root {
+  --radius: 1rem;
+
+  --background: #f7fafc;
+  --foreground: #21384c; /* comfortable slate-navy for body */
+
+  --card: #ffffff;
+  --card-foreground: #21384c;
+
+  --popover: #ffffff;
+  --popover-foreground: #0b2942;
+
+  --primary: #0b2942; /* navy as default primary */
+  --primary-foreground: #f7fafc;
+
+  --secondary: #e6eef2; /* sea glass */
+  --secondary-foreground: #0b2942;
+
+  --muted: #eef3f7;
+  --muted-foreground: #48637a;
+
+  --accent: #dceef8; /* tide-100 */
+  --accent-foreground: #0b2942;
+
+  --destructive: oklch(0.577 0.214 27.2);
+
+  --border: #d6e0e7;
+  --input: #cdd9e1;
+  --ring: #3da5d9; /* tide focus ring */
+}
+
+/* ===========================================================================
+   BASE LAYER
+   =========================================================================== */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply font-sans;
+    scroll-behavior: smooth;
+    /* offset anchored sections so the sticky header doesn't cover headings */
+    scroll-padding-top: 5.5rem;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    @apply bg-canvas text-foreground;
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  /* Tabular figures wherever precision matters (phone, stats, ratings) */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display text-navy-900;
+    font-optical-sizing: auto;
+    letter-spacing: -0.012em;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background: var(--color-gold-200);
+    color: var(--color-navy-900);
+  }
+
+  /* Brand focus ring for keyboard users (never remove outlines) */
+  :focus-visible {
+    outline: 2px solid var(--color-tide-400);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+/* ===========================================================================
+   ACCESSIBILITY — honor reduced motion everywhere
+   =========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===========================================================================
+   BRAND UTILITIES
+   =========================================================================== */
+@layer components {
+  /* Eyebrow / kicker label */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-[0.8125rem] font-semibold uppercase tracking-[0.14em] text-tide-600;
+  }
+
+  /* Frosted glass surface with the signature 1px chrome top-edge highlight */
+  .glass {
+    background: color-mix(in srgb, #ffffff 72%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(135%);
+    backdrop-filter: blur(14px) saturate(135%);
+    border: 1px solid color-mix(in srgb, var(--color-chrome-300) 55%, transparent);
+    box-shadow: var(--shadow-glass);
+  }
+
+  .glass-card {
+    position: relative;
+    background: color-mix(in srgb, #ffffff 78%, transparent);
+    -webkit-backdrop-filter: blur(16px) saturate(135%);
+    backdrop-filter: blur(16px) saturate(135%);
+    border: 1px solid color-mix(in srgb, var(--color-chrome-300) 60%, transparent);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-glass);
+  }
+  /* The bright chrome "light catching a clean blade" along the top edge */
+  .glass-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    margin: 0 12%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(255 255 255 / 0.95),
+      transparent
+    );
+    pointer-events: none;
+  }
+
+  /* Dark navy glass (used on footer / final CTA cards) */
+  .glass-dark {
+    background: color-mix(in srgb, var(--color-navy-900) 80%, transparent);
+    -webkit-backdrop-filter: blur(12px) saturate(120%);
+    backdrop-filter: blur(12px) saturate(120%);
+    border: 1px solid color-mix(in srgb, #ffffff 14%, transparent);
+  }
+
+  /* Squeegee-blade divider: chrome gradient fading to transparent */
+  .chrome-rule {
+    height: 1px;
+    border: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-chrome-300),
+      transparent
+    );
+  }
+
+  /* Faint architectural windowpane lattice for section backgrounds */
+  .mullion-bg {
+    background-image: linear-gradient(
+        to right,
+        color-mix(in srgb, var(--color-navy-900) 5%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--color-navy-900) 5%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: clamp(120px, 12vw, 200px) clamp(120px, 12vw, 200px);
+  }
+
+  /* Soft golden-hour bloom anchored to a corner */
+  .sun-glow {
+    background: radial-gradient(
+      60% 60% at 80% 0%,
+      color-mix(in srgb, var(--color-gold-200) 60%, transparent),
+      transparent 70%
+    );
+  }
+
+  /* Subtle film grain to kill the "flat AI render" sterility */
+  .grain {
+    position: relative;
+  }
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---- The single, rationed golden CTA ---- */
+  .cta-gold {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    background: linear-gradient(
+      180deg,
+      var(--color-gold-400),
+      var(--color-gold-500)
+    );
+    color: var(--color-navy-900);
+    box-shadow: var(--shadow-cta);
+    animation: cta-breathe 3s ease-in-out infinite;
+  }
+  .cta-gold:hover {
+    background: linear-gradient(
+      180deg,
+      var(--color-gold-300),
+      var(--color-gold-500)
+    );
+  }
+  /* specular highlight that sweeps across like sun on wet glass (~6s) */
+  .cta-gold::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(255 255 255 / 0.55),
+      transparent
+    );
+    transform: skewX(-18deg);
+    animation: specular 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  /* Reusable max-width section shell */
+  .container-x {
+    @apply mx-auto w-full max-w-7xl px-5 sm:px-8 lg:px-10;
+  }
+}
+
+/* ===========================================================================
+   KEYFRAMES
+   =========================================================================== */
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--accordion-panel-height);
+  }
+}
+@keyframes accordion-up {
+  from {
+    height: var(--accordion-panel-height);
+  }
+  to {
+    height: 0;
+  }
+}
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+@keyframes cta-breathe {
+  0%,
+  100% {
+    box-shadow: 0 10px 30px -10px rgb(242 169 59 / 0.45),
+      0 0 0 0 rgb(252 226 176 / 0);
+  }
+  50% {
+    box-shadow: 0 14px 36px -8px rgb(242 169 59 / 0.6),
+      0 0 28px 6px rgb(252 226 176 / 0.45);
+  }
+}
+@keyframes specular {
+  0% {
+    left: -60%;
+  }
+  35%,
+  100% {
+    left: 130%;
+  }
+}
